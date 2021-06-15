@@ -20,7 +20,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
-public class SecondActivity extends AppCompatActivity {
+public class SecondActivity<profileImage> extends AppCompatActivity {
     ImageView profileImage;
 
     @Override
@@ -29,85 +29,4 @@ public class SecondActivity extends AppCompatActivity {
         setContentView(R.layout.activity_second);
     }
 
-    Intent fromPrevious = getIntent();
-    String emailAdd = fromPrevious.getStringExtra("EmailAddress");
-    profileImage = findViewById(R.id.imageView)
-
-    TextView welcomeMeg = findViewById(R.id.welcome);
-
-        welcomeMeg.setText("Welcom back "+emailAdd);
-    SharedPreferences prefs = getSharedPreferences("MyData", Context.MODE_PRIVATE);
-
-    EditText editText = findViewById(R.id.editTextPhone);
-
-    String phoneNum = prefs.getString("phoneNumber", "");
-        editText.setText(phoneNum);
-
-
-    EditText phone = findViewById(R.id.editTextPhone);
-    Button callButton = findViewById(R.id.button);
-        callButton.setOnClickListener(clk ->
-
-    {
-        Intent call = new Intent(Intent.ACTION_DIAL);
-        call.setData(Uri.parse("tel:" + phone.getText().toString()));
-
-        //save to shared prefs
-
-
-        startActivityForResult(call, 5432);
-    });
-
-
-    Button changePic = findViewById(R.id.changePIC);
-
-        changePic.setOnClickListener(event -> {
-        Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        startActivityForResult(cameraIntent,3456);
-    });
-
-    String path = getFilesDir().getPath();
-    File file = new File(path+"/Picture.png");
-        if (file.exists())
-    {
-        Bitmap theImage = BitmapFactory.decodeFile(path+"/Picture.png");
-        profileImage.setImageBitmap(theImage);
     }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        SharedPreferences prefs = getSharedPreferences("MyData", Context.MODE_PRIVATE);
-        SharedPreferences.Editor  editor = prefs.edit();
-        EditText editPhone = findViewById(R.id.editTextPhone);
-        editor.putString("phoneNumber", editPhone.getText().toString());
-        editor.apply();
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == 3456) {
-            if (resultCode == RESULT_OK) {
-
-                try {
-                    Bitmap thumbnail = data.getParcelableExtra("data");
-
-                    profileImage.setImageBitmap(thumbnail);
-                    FileOutputStream fOut = null;
-
-                    fOut = openFileOutput("Picture.png", Context.MODE_PRIVATE);
-                    thumbnail.compress(Bitmap.CompressFormat.PNG, 100, fOut);
-                    fOut.flush();
-                    fOut.close();
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-
-            }
-        }
-
-    }
-}
